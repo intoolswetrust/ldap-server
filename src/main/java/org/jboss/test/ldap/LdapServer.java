@@ -33,24 +33,39 @@ import org.apache.directory.server.core.factory.DSAnnotationProcessor;
 import org.apache.directory.server.core.kerberos.KeyDerivationInterceptor;
 import org.apache.directory.server.factory.ServerAnnotationProcessor;
 import org.apache.directory.shared.ldap.model.entry.DefaultEntry;
+import org.apache.directory.shared.ldap.model.exception.LdapException;
 import org.apache.directory.shared.ldap.model.ldif.LdifEntry;
 import org.apache.directory.shared.ldap.model.ldif.LdifReader;
 import org.apache.directory.shared.ldap.model.schema.SchemaManager;
 
+/**
+ * Creates and starts LDAP server(s).
+ * 
+ * @author Josef Cacek
+ */
 public class LdapServer {
+
+    private static final int LDAP_PORT = 10389;
+
+    private static final String LDIF_FILENAME_JBOSS_ORG = "jboss-org.ldif";
 
     // Public methods --------------------------------------------------------
 
     /**
+     * Starts an LDAP server.
      * 
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        create2();
-        create1();
+        createServer1();
     }
 
+    /**
+     * Create a single LDAP server.
+     * 
+     * @throws Exception
+     */
     //@formatter:off
     @CreateDS( 
         name = "JBossOrgDS",
@@ -77,72 +92,30 @@ public class LdapServer {
     @CreateLdapServer ( 
         transports = 
         {
-            @CreateTransport( protocol = "LDAP",  port = 10389, address = "0.0.0.0" ), 
+            @CreateTransport( protocol = "LDAP",  port = LDAP_PORT, address = "0.0.0.0" ), 
         })            
     //@formatter:on
-    public static void create1() throws Exception {
+    public static void createServer1() throws Exception {
         DirectoryService directoryService = DSAnnotationProcessor.getDirectoryService();
         final SchemaManager schemaManager = directoryService.getSchemaManager();
-        importLdif(directoryService, schemaManager, "jboss-org.ldif");
-        final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
-                (CreateLdapServer) AnnotationUtils.getInstance(CreateLdapServer.class));
-        ServerAnnotationProcessor.instantiateLdapServer(createLdapServer, directoryService).start();
-    }
-
-    //@formatter:off
-    @CreateDS( 
-        name = "JBossComDS",
-        allowAnonAccess=true,
-        partitions =
-        {
-            @CreatePartition(
-                name = "jbosscom",
-                suffix = "dc=jboss,dc=com",
-                contextEntry = @ContextEntry( 
-                    entryLdif =
-                        "dn: dc=jboss,dc=com\n" +
-                        "dc: jboss\n" +
-                        "objectClass: top\n" +
-                        "objectClass: domain\n\n" ),
-                indexes = 
-                {
-                    @CreateIndex( attribute = "objectClass" ),
-                    @CreateIndex( attribute = "dc" ),
-                    @CreateIndex( attribute = "ou" )
-                })
-        },
-        additionalInterceptors = { KeyDerivationInterceptor.class })
-    @CreateLdapServer ( 
-        transports = 
-        {
-            @CreateTransport( protocol = "LDAP",  port = 11389, address = "0.0.0.0" ), 
-        })            
-    //@formatter:on
-    public static void create2() throws Exception {
-        DirectoryService directoryService = DSAnnotationProcessor.getDirectoryService();
-        final SchemaManager schemaManager = directoryService.getSchemaManager();
-        importLdif(directoryService, schemaManager, "jboss-com.ldif");
+        importLdif(directoryService, schemaManager, LDIF_FILENAME_JBOSS_ORG);
         final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
                 (CreateLdapServer) AnnotationUtils.getInstance(CreateLdapServer.class));
         ServerAnnotationProcessor.instantiateLdapServer(createLdapServer, directoryService).start();
     }
 
     /**
+     * Imports given LDIF file to the directoy using given directory service and schema manager.
      * 
      * @param directoryService
      * @param schemaManager
      * @param ldifFile
-     * @throws Exception
+     * @throws LdapException
      */
     private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, String ldifFile)
-            throws Exception {
-        try {
-            for (LdifEntry ldifEntry : new LdifReader(LdapServer.class.getResourceAsStream("/" + ldifFile))) {
-                directoryService.getAdminSession().add(new DefaultEntry(schemaManager, ldifEntry.getEntry()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            throws LdapException {
+        for (LdifEntry ldifEntry : new LdifReader(LdapServer.class.getResourceAsStream("/" + ldifFile))) {
+            directoryService.getAdminSession().add(new DefaultEntry(schemaManager, ldifEntry.getEntry()));
         }
     }
 

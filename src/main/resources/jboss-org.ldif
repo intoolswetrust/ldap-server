@@ -3,15 +3,6 @@ objectClass: organizationalUnit
 objectClass: top
 ou: Users
 
-dn: uid=hnelson,ou=Users,dc=jboss,dc=org
-objectClass: top
-objectClass: person
-objectClass: inetOrgPerson
-cn: Horatio Nelson
-sn: Nelson
-uid: hnelson
-userPassword: secret
-
 dn: uid=jduke,ou=Users,dc=jboss,dc=org
 objectClass: top
 objectClass: person
@@ -20,30 +11,3 @@ cn: Java Duke
 sn: duke
 uid: jduke
 userPassword: theduke
-
-dn: ou=Users2,ou=Users,dc=jboss,dc=org
-objectClass: extensibleObject
-objectClass: referral
-objectClass: top
-ou: Users2
-ref: ldap://localhost:10389/ou=Users2,dc=jboss,dc=org
-
-dn: ou=Roles,dc=jboss,dc=org
-objectclass: top
-objectclass: organizationalUnit
-ou: Roles
-
-dn: ou=RefRoles,ou=Roles,dc=jboss,dc=org
-objectClass: extensibleObject
-objectClass: referral
-objectClass: top
-ou: RefRoles
-ref: ldap://localhost:11389/ou=MainRoles,dc=jboss,dc=com
-
-dn: cn=UserX,ou=Roles,dc=jboss,dc=org
-objectClass: top
-objectClass: groupOfNames
-cn: UserX
-description: UserX group
-member: uid=jduke,ou=Users,dc=jboss,dc=org
-member: uid=hnelson,ou=Users,dc=jboss,dc=org
