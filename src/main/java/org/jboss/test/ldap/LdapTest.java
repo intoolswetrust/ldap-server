@@ -33,64 +33,39 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
 /**
- * A LdapTest.
+ * A simple test of running LDAP server.
  * 
  * @author Josef Cacek
  */
 public class LdapTest {
 
+    // Public methods --------------------------------------------------------
+
     /**
+     * The main.
      * 
      * @param args
      * @throws NamingException
      */
     public static void main(String[] args) throws NamingException {
-        String ldapUrl = "ldap://localhost:10389";
-        Properties env = new Properties();
+        final String ldapUrl = "ldap://localhost:10389";
+        final Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapUrl);
-        env.put(Context.REFERRAL, "follow");
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        //        env.put(Context.SECURITY_PRINCIPAL, "uid=test,ou=Users,dc=jboss,dc=org");
         env.put(Context.SECURITY_PRINCIPAL, "uid=admin,ou=system");
         env.put(Context.SECURITY_CREDENTIALS, "secret");
-        //        env.put(Context.SECURITY_CREDENTIALS, "theduke");
-        LdapContext ctx = new InitialLdapContext(env, null);
-        //        ctx.setRequestControls(null);
-        NamingEnumeration<?> namingEnum = ctx.search("dc=jboss,dc=org", "(|(cn=Admin)(objectClass=referral))",
-                getSimpleSearchControls());
-        //        NamingEnumeration<?> namingEnum = ctx.search("ou=Users,dc=jboss,dc=org", "(|(objectClass=referral)(uid=rslave))",
-        //                getSimpleSearchControls());
-        //        NamingEnumeration<?> namingEnum = ctx.search("ou=Roles,dc=jboss,dc=org",
-        //                "(|(member=uid=jduke,ou=Users,dc=jboss,dc=org)(objectClass=referral))", getSimpleSearchControls());
+        final LdapContext ctx = new InitialLdapContext(env, null);
+        // ctx.setRequestControls(null);
+        final SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        NamingEnumeration<?> namingEnum = ctx.search("dc=jboss,dc=org", "(uid=*)", searchControls);
         while (namingEnum.hasMore()) {
             SearchResult sr = (SearchResult) namingEnum.next();
-            System.out.println((sr.isRelative() ? "Relative: " : "") + sr.getNameInNamespace() + ", Name: " + sr.getName());
             Attributes attrs = sr.getAttributes();
-            System.out.println(attrs.get("cn").get());
+            System.out.println(attrs.get("cn"));
         }
         namingEnum.close();
         ctx.close();
-
-        System.out.println("Done");
     }
-
-    private static SearchControls getSimpleSearchControls() {
-        SearchControls searchControls = new SearchControls();
-        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        //        searchControls.setTimeLimit(30000);
-        //String[] attrIDs = {"objectGUID"};
-        //searchControls.setReturningAttributes(attrIDs);
-        return searchControls;
-    }
-
-    // Constructors ----------------------------------------------------------
-
-    // Public methods --------------------------------------------------------
-
-    // Protected methods -----------------------------------------------------
-
-    // Private methods -------------------------------------------------------
-
-    // Embedded classes ------------------------------------------------------
 }
