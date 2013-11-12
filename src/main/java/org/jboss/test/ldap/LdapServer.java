@@ -104,6 +104,11 @@ public class LdapServer {
         final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
                 (CreateLdapServer) AnnotationUtils.getInstance(CreateLdapServer.class));
         ServerAnnotationProcessor.instantiateLdapServer(createLdapServer, directoryService).start();
+
+        System.out.println("You can connect to the server now");
+        System.out.println("URL:      ldap://127.0.0.1:10389");
+        System.out.println("User DN:  uid=admin,ou=system");
+        System.out.println("Password: secret");
     }
 
     /**
@@ -116,15 +121,16 @@ public class LdapServer {
      */
     private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, String ldifFile)
             throws LdapException {
+        System.out.println("Importing " + (ldifFile != null ? ldifFile : "default data") + ":\n");
         final LdifReader ldifReader = ldifFile != null ? new LdifReader(ldifFile) : new LdifReader(
                 LdapServer.class.getResourceAsStream("/" + LDIF_FILENAME_JBOSS_ORG));
         try {
             for (LdifEntry ldifEntry : ldifReader) {
+                System.out.print(ldifEntry.toString());
                 directoryService.getAdminSession().add(new DefaultEntry(schemaManager, ldifEntry.getEntry()));
             }
         } finally {
             IOUtils.closeQuietly(ldifReader);
         }
     }
-
 }
