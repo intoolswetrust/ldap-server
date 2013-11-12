@@ -21,6 +21,7 @@
  */
 package org.jboss.test.ldap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.AnnotationUtils;
@@ -58,7 +59,8 @@ public class LdapServer {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        createServer1();
+        final String ldifFile = args.length > 0 ? args[0] : null;
+        createServer1(ldifFile);
     }
 
     /**
@@ -95,10 +97,10 @@ public class LdapServer {
             @CreateTransport( protocol = "LDAP",  port = LDAP_PORT, address = "0.0.0.0" ), 
         })            
     //@formatter:on
-    public static void createServer1() throws Exception {
+    public static void createServer1(final String ldifFile) throws Exception {
         DirectoryService directoryService = DSAnnotationProcessor.getDirectoryService();
         final SchemaManager schemaManager = directoryService.getSchemaManager();
-        importLdif(directoryService, schemaManager, LDIF_FILENAME_JBOSS_ORG);
+        importLdif(directoryService, schemaManager, ldifFile);
         final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
                 (CreateLdapServer) AnnotationUtils.getInstance(CreateLdapServer.class));
         ServerAnnotationProcessor.instantiateLdapServer(createLdapServer, directoryService).start();
@@ -114,8 +116,14 @@ public class LdapServer {
      */
     private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, String ldifFile)
             throws LdapException {
-        for (LdifEntry ldifEntry : new LdifReader(LdapServer.class.getResourceAsStream("/" + ldifFile))) {
-            directoryService.getAdminSession().add(new DefaultEntry(schemaManager, ldifEntry.getEntry()));
+        final LdifReader ldifReader = ldifFile != null ? new LdifReader(ldifFile) : new LdifReader(
+                LdapServer.class.getResourceAsStream("/" + LDIF_FILENAME_JBOSS_ORG));
+        try {
+            for (LdifEntry ldifEntry : ldifReader) {
+                directoryService.getAdminSession().add(new DefaultEntry(schemaManager, ldifEntry.getEntry()));
+            }
+        } finally {
+            IOUtils.closeQuietly(ldifReader);
         }
     }
 
