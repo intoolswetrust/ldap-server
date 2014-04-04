@@ -21,6 +21,8 @@
  */
 package org.jboss.test.ldap;
 
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
@@ -31,7 +33,6 @@ import org.apache.directory.server.core.annotations.CreateIndex;
 import org.apache.directory.server.core.annotations.CreatePartition;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.factory.DSAnnotationProcessor;
-import org.apache.directory.server.core.kerberos.KeyDerivationInterceptor;
 import org.apache.directory.server.factory.ServerAnnotationProcessor;
 import org.apache.directory.shared.ldap.model.entry.DefaultEntry;
 import org.apache.directory.shared.ldap.model.exception.LdapException;
@@ -41,7 +42,7 @@ import org.apache.directory.shared.ldap.model.schema.SchemaManager;
 
 /**
  * Creates and starts LDAP server(s).
- * 
+ *
  * @author Josef Cacek
  */
 public class LdapServer {
@@ -54,22 +55,36 @@ public class LdapServer {
 
     /**
      * Starts an LDAP server.
-     * 
+     *
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        final String ldifFile = args.length > 0 ? args[0] : null;
-        createServer1(ldifFile);
+        final CLIArguments cliArguments = new CLIArguments();
+        final ExtCommander jCmd = new ExtCommander(cliArguments, args);
+        jCmd.setProgramName("java -jar ldap-server.jar");
+        jCmd.setUsageHead("The ldap-server is a simple LDAP server implementation based on ApacheDS. It creates one user partition with root 'dc=jboss,dc=org'.");
+        jCmd.setUsageTail("Examples:\n\n" //
+                + "$ java -jar ldap-server.jar users.ldif\n" //
+                + " Starts LDAP server on port 10389 (all interfaces) and imports users.ldif\n\n" //
+                + "$ java -jar ldap-server.jar -b 127.0.0.1 -p 389\n" //
+                + " Starts LDAP server on address 127.0.0.1:389 and imports default data (one user entry 'uid=jduke,ou=Users,dc=jboss,dc=org'");
+        if (cliArguments.isHelp()) {
+            jCmd.usage();
+            return;
+        }
+        createServer1(cliArguments);
     }
 
     /**
      * Create a single LDAP server.
-     * 
+     *
+     * @param cliArguments
+     *
      * @throws Exception
      */
     //@formatter:off
-    @CreateDS( 
+    @CreateDS(
         name = "JBossOrgDS",
         allowAnonAccess=true,
         partitions =
@@ -77,53 +92,70 @@ public class LdapServer {
             @CreatePartition(
                 name = "jbossorg",
                 suffix = "dc=jboss,dc=org",
-                contextEntry = @ContextEntry( 
+                contextEntry = @ContextEntry(
                     entryLdif =
                         "dn: dc=jboss,dc=org\n" +
                         "dc: jboss\n" +
                         "objectClass: top\n" +
                         "objectClass: domain\n\n" ),
-                indexes = 
+                indexes =
                 {
                     @CreateIndex( attribute = "objectClass" ),
                     @CreateIndex( attribute = "dc" ),
                     @CreateIndex( attribute = "ou" )
                 })
-        },
-        additionalInterceptors = { KeyDerivationInterceptor.class })
-    @CreateLdapServer ( 
-        transports = 
+        })
+    @CreateLdapServer (
+        transports =
         {
-            @CreateTransport( protocol = "LDAP",  port = LDAP_PORT, address = "0.0.0.0" ), 
-        })            
+            @CreateTransport( protocol = "LDAP",  port = LDAP_PORT, address = "0.0.0.0" ),
+        })
     //@formatter:on
-    public static void createServer1(final String ldifFile) throws Exception {
+    public static void createServer1(CLIArguments cliArguments) throws Exception {
         DirectoryService directoryService = DSAnnotationProcessor.getDirectoryService();
         final SchemaManager schemaManager = directoryService.getSchemaManager();
-        importLdif(directoryService, schemaManager, ldifFile);
+        importLdif(directoryService, schemaManager, cliArguments.getLdifFiles());
         final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
                 (CreateLdapServer) AnnotationUtils.getInstance(CreateLdapServer.class));
+        fixTransportAddress(createLdapServer, cliArguments.getBindAddress(), cliArguments.getPort());
         ServerAnnotationProcessor.instantiateLdapServer(createLdapServer, directoryService).start();
 
         System.out.println("You can connect to the server now");
-        System.out.println("URL:      ldap://127.0.0.1:10389");
+        final String host;
+        if (CLIArguments.DEFAULT_ADDR.equals(cliArguments.getBindAddress())) {
+            host = "127.0.0.1";
+        } else {
+            host = cliArguments.getBindAddress();
+        }
+        System.out.println("URL:      ldap://" + host + ":" + cliArguments.getPort());
         System.out.println("User DN:  uid=admin,ou=system");
         System.out.println("Password: secret");
     }
 
     /**
      * Imports given LDIF file to the directoy using given directory service and schema manager.
-     * 
+     *
      * @param directoryService
      * @param schemaManager
-     * @param ldifFile
+     * @param ldifFiles
      * @throws LdapException
      */
-    private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, String ldifFile)
+    private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, List<String> ldifFiles)
             throws LdapException {
-        System.out.println("Importing " + (ldifFile != null ? ldifFile : "default data") + ":\n");
-        final LdifReader ldifReader = ldifFile != null ? new LdifReader(ldifFile) : new LdifReader(
-                LdapServer.class.getResourceAsStream("/" + LDIF_FILENAME_JBOSS_ORG));
+        if (ldifFiles == null || ldifFiles.isEmpty()) {
+            System.out.println("Importing default data:\n");
+            importLdif(directoryService, schemaManager,
+                    new LdifReader(LdapServer.class.getResourceAsStream("/" + LDIF_FILENAME_JBOSS_ORG)));
+        } else {
+            for (String ldifFile : ldifFiles) {
+                System.out.println("Importing " + ldifFile + ":\n");
+                importLdif(directoryService, schemaManager, new LdifReader(ldifFile));
+            }
+        }
+    }
+
+    private static void importLdif(DirectoryService directoryService, final SchemaManager schemaManager, LdifReader ldifReader)
+            throws LdapException {
         try {
             for (LdifEntry ldifEntry : ldifReader) {
                 System.out.print(ldifEntry.toString());
@@ -131,6 +163,22 @@ public class LdapServer {
             }
         } finally {
             IOUtils.closeQuietly(ldifReader);
+        }
+    }
+
+    /**
+     * Fixes bind address in the CreateTransport annotation.
+     *
+     * @param createLdapServer
+     * @param port
+     */
+    private static void fixTransportAddress(ManagedCreateLdapServer createLdapServer, String address, int port) {
+        final CreateTransport[] createTransports = createLdapServer.transports();
+        for (int i = 0; i < createTransports.length; i++) {
+            final ManagedCreateTransport mgCreateTransport = new ManagedCreateTransport(createTransports[i]);
+            mgCreateTransport.setAddress(address);
+            mgCreateTransport.setPort(port);
+            createTransports[i] = mgCreateTransport;
         }
     }
 }
