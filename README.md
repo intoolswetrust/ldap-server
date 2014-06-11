@@ -25,6 +25,34 @@ You need to have [Maven](http://maven.apache.org/) installed
 
 	$ java -jar ldap-server.jar [data.ldif]
 
+#### Help
+
+	$ java -jar ldap-server.jar --help
+	The ldap-server is a simple LDAP server implementation based on ApacheDS. It
+	creates one user partition with root 'dc=jboss,dc=org'.
+	
+	Usage: java -jar ldap-server.jar [options] [LDIFs to import]
+	  Options:
+	    --bind, -b
+	       takes [bindAddress] as a parameter and binds the LDAP server on the
+	       address
+	       Default: 0.0.0.0
+	    --help, -h
+	       shows this help and exits
+	       Default: false
+	    --port, -p
+	       takes [portNumber] as a parameter and binds the LDAP server on that port
+	       Default: 10389
+	
+	Examples:
+	
+	$ java -jar ldap-server.jar users.ldif
+	Starts LDAP server on port 10389 (all interfaces) and imports users.ldif
+	
+	$ java -jar ldap-server.jar -b 127.0.0.1 -p 389
+	Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
+	entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
+
 ## Default LDIF
 
 	dn: ou=Users,dc=jboss,dc=org
