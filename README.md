@@ -1,6 +1,8 @@
 # ldap-server
 
-Simple all-in-one LDAP server, which uses in `dc=jboss,dc=org` partition.
+Simple all-in-one LDAP server (wrapped [ApacheDS](http://directory.apache.org/apacheds/)), which uses in `dc=jboss,dc=org` partition.
+
+You don't need any configuration files to get it working. Just launch the JAR and that's it.
 
 ## Development
 
