@@ -29,18 +29,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.directory.shared.i18n.I18n;
-import org.apache.directory.shared.ldap.model.exception.LdapInvalidDnException;
-import org.apache.directory.shared.ldap.model.exception.LdapURLEncodingException;
-import org.apache.directory.shared.ldap.model.exception.LdapUriException;
-import org.apache.directory.shared.ldap.model.exception.UrlDecoderException;
-import org.apache.directory.shared.ldap.model.filter.FilterParser;
-import org.apache.directory.shared.ldap.model.message.SearchScope;
-import org.apache.directory.shared.ldap.model.name.Dn;
-import org.apache.directory.shared.util.Chars;
-import org.apache.directory.shared.util.StringConstants;
-import org.apache.directory.shared.util.Strings;
-import org.apache.directory.shared.util.Unicode;
+import org.apache.directory.api.i18n.I18n;
+import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
+import org.apache.directory.api.ldap.model.exception.LdapURLEncodingException;
+import org.apache.directory.api.ldap.model.exception.LdapUriException;
+import org.apache.directory.api.ldap.model.exception.UrlDecoderException;
+import org.apache.directory.api.ldap.model.filter.FilterParser;
+import org.apache.directory.api.ldap.model.message.SearchScope;
+import org.apache.directory.api.ldap.model.name.Dn;
+import org.apache.directory.api.util.Chars;
+import org.apache.directory.api.util.StringConstants;
+import org.apache.directory.api.util.Strings;
+import org.apache.directory.api.util.Unicode;
 
 /**
  * Hotfix for ApacheDS IPv6 issue <a href="https://issues.apache.org/jira/browse/DIRAPI-125">DIRAPI-125</a>.
@@ -48,7 +48,7 @@ import org.apache.directory.shared.util.Unicode;
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  * @author Josef Cacek
  */
-//FIXME remove this class when DIRAPI-125 issue is fixed.
+// FIXME remove this class when DIRAPI-125 issue is fixed.
 public class LdapUrl {
     /** The constant for "ldaps://" scheme. */
     public static final String LDAPS_SCHEME = "ldaps://";
@@ -928,7 +928,7 @@ public class LdapUrl {
             // just append to the buffer
 
             // reserved gen-delims, excluding '?'
-            // gen-delims  = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+            // gen-delims = ":" / "/" / "?" / "#" / "[" / "]" / "@"
                 case ':':
                 case '/':
                 case '#':
@@ -937,8 +937,8 @@ public class LdapUrl {
                 case '@':
 
                     // reserved sub-delims, excluding ','
-                    // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
-                    //               / "*" / "+" / "," / ";" / "="
+                    // sub-delims = "!" / "$" / "&" / "'" / "(" / ")"
+                    // / "*" / "+" / "," / ";" / "="
                 case '!':
                 case '$':
                 case '&':
@@ -951,7 +951,7 @@ public class LdapUrl {
                 case '=':
 
                     // unreserved
-                    // unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+                    // unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
                 case 'a':
                 case 'b':
                 case 'c':

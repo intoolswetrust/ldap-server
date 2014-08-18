@@ -85,7 +85,7 @@ public class ManagedCreateLdapServer extends AnnotationLiteral<CreateLdapServer>
         ntlmProvider = createLdapServer.ntlmProvider();
         saslHost = createLdapServer.saslHost();
         saslPrincipal = createLdapServer.saslPrincipal();
-        //        saslRealms = createLdapServer.saslRealms();
+        saslRealms = createLdapServer.saslRealms();
     }
 
     // Public methods --------------------------------------------------------
