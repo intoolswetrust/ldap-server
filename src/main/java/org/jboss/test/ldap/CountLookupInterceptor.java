@@ -42,14 +42,14 @@ public class CountLookupInterceptor extends BaseInterceptor {
     public Entry lookup(LookupOperationContext lookupContext) throws LdapException {
         counter++;
         System.out.println(">> lookup: " + lookupContext + " (counter=" + counter + ")");
-        return super.lookup(lookupContext);
+        return next(lookupContext);
     }
 
     @Override
     public EntryFilteringCursor search(SearchOperationContext searchContext) throws LdapException {
         counter++;
         System.out.println(">> search: " + searchContext + " (counter=" + counter + ")");
-        return super.search(searchContext);
+        return next(searchContext);
     }
 
     public static synchronized void resetCounter() {
