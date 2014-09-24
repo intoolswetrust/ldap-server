@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<version.org.apache.ds>2.0.0-M17</version.org.apache.ds>
+		<version.org.apache.ds>2.0.0-M15</version.org.apache.ds>
 	</properties>
 
 	<build>

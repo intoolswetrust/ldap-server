@@ -1,3 +1,5 @@
+version: 1
+
 dn: ou=Users,dc=jboss,dc=org
 objectClass: organizationalUnit
 objectClass: top

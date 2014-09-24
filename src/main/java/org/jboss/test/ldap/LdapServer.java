@@ -38,6 +38,7 @@ import org.apache.directory.server.core.annotations.CreateIndex;
 import org.apache.directory.server.core.annotations.CreatePartition;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.factory.DSAnnotationProcessor;
+import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
 import org.apache.directory.server.factory.ServerAnnotationProcessor;
 
 /**
@@ -87,10 +88,14 @@ public class LdapServer {
     @CreateDS(
         name = "JBossOrgDS",
         allowAnonAccess=true,
+        factory=InMemoryDirectoryServiceFactory.class,
+        enableChangeLog = false,
+        additionalInterceptors=CountLookupInterceptor.class,
         partitions =
         {
             @CreatePartition(
                 name = "jbossorg",
+                type = AvlPartition.class,
                 suffix = "dc=jboss,dc=org",
                 contextEntry = @ContextEntry(
                     entryLdif =
@@ -103,7 +108,8 @@ public class LdapServer {
                     @CreateIndex( attribute = "objectClass" ),
                     @CreateIndex( attribute = "dc" ),
                     @CreateIndex( attribute = "ou" )
-                })
+                }
+            )
         })
     @CreateLdapServer (
         transports =
@@ -112,7 +118,9 @@ public class LdapServer {
         })
     //@formatter:on
     public static void createServer1(CLIArguments cliArguments) throws Exception {
+        long startTime = System.currentTimeMillis();
         DirectoryService directoryService = DSAnnotationProcessor.getDirectoryService();
+        System.out.println("Directory service started in " + (System.currentTimeMillis() - startTime) + "ms");
         final SchemaManager schemaManager = directoryService.getSchemaManager();
         importLdif(directoryService, schemaManager, cliArguments.getLdifFiles());
         final ManagedCreateLdapServer createLdapServer = new ManagedCreateLdapServer(
@@ -130,6 +138,7 @@ public class LdapServer {
         System.out.println("URL:      ldap://" + host + ":" + cliArguments.getPort());
         System.out.println("User DN:  uid=admin,ou=system");
         System.out.println("Password: secret");
+        System.out.println("LDAP server started in " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     /**
