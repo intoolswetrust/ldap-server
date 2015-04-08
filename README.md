@@ -70,6 +70,18 @@ You need to have [Maven](http://maven.apache.org/) installed
 	sn: duke
 	uid: jduke
 	userPassword: theduke
+	
+	dn: ou=Roles,dc=jboss,dc=org
+	objectclass: top
+	objectclass: organizationalUnit
+	ou: Roles
+	
+	dn: cn=Admin,ou=Roles,dc=jboss,dc=org
+	objectClass: top
+	objectClass: groupOfNames
+	cn: Admin
+	member: uid=jduke,ou=Users,dc=jboss,dc=org
+
 
 ## License
 
