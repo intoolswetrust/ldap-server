@@ -40,9 +40,8 @@ public class LdapServer {
 
     private static final String LDIF_FILENAME_JBOSS_ORG = "jboss-org.ldif";
 
-    private InMemoryDirectoryServiceFactory dsFactory = new InMemoryDirectoryServiceFactory();
-    private DirectoryService directoryService;
-    private org.apache.directory.server.ldap.LdapServer ldapServer;
+    private final DirectoryService directoryService;
+    private final org.apache.directory.server.ldap.LdapServer ldapServer;
 
     // Public methods --------------------------------------------------------
 
@@ -67,7 +66,7 @@ public class LdapServer {
             jCmd.usage();
             return;
         }
-        new LdapServer().createServer(cliArguments);
+        new LdapServer(cliArguments);
     }
 
     /**
@@ -77,10 +76,12 @@ public class LdapServer {
      *
      * @throws Exception
      */
-    public void createServer(CLIArguments cliArguments) throws Exception {
+    public LdapServer(CLIArguments cliArguments) throws Exception {
         long startTime = System.currentTimeMillis();
 
+        InMemoryDirectoryServiceFactory dsFactory = new InMemoryDirectoryServiceFactory();
         dsFactory.init("ds");
+
         directoryService = dsFactory.getDirectoryService();
 
         System.out.println("Directory service started in " + (System.currentTimeMillis() - startTime) + "ms");
@@ -103,6 +104,16 @@ public class LdapServer {
         System.out.println("User DN:  uid=admin,ou=system");
         System.out.println("Password: secret");
         System.out.println("LDAP server started in " + (System.currentTimeMillis() - startTime) + "ms");
+    }
+
+    /**
+     * Stops LDAP server and the underlying directory service.
+     * 
+     * @throws Exception
+     */
+    public void stop() throws Exception {
+        ldapServer.stop();
+        directoryService.shutdown();
     }
 
     /**
