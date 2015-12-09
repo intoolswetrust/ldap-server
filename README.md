@@ -1,6 +1,6 @@
 # ldap-server
 
-Simple all-in-one LDAP server (wrapped [ApacheDS](http://directory.apache.org/apacheds/)), which uses in `dc=jboss,dc=org` partition.
+Simple all-in-one LDAP server (wrapped [ApacheDS](http://directory.apache.org/apacheds/)).
 
 You don't need any configuration files to get it working. Just launch the JAR and that's it.
 
@@ -56,6 +56,11 @@ You need to have [Maven](http://maven.apache.org/) installed
 	entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
 
 ## Default LDIF
+
+	dn: dc=jboss,dc=org
+	dc: jboss
+	objectClass: top
+	objectClass: domain
 
 	dn: ou=Users,dc=jboss,dc=org
 	objectClass: organizationalUnit
