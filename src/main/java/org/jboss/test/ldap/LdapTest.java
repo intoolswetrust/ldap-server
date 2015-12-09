@@ -46,7 +46,7 @@ public class LdapTest {
      * @throws NamingException
      */
     public static void main(String[] args) throws NamingException {
-        final String ldapUrl = "ldap://localhost:10389";
+        final String ldapUrl = "ldap://[::1]:10389";
         final Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapUrl);

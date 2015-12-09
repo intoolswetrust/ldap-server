@@ -100,7 +100,7 @@ public class LdapServer {
         } else {
             host = cliArguments.getBindAddress();
         }
-        System.out.println("URL:      ldap://" + host + ":" + cliArguments.getPort());
+        System.out.println("URL:      ldap://" + formatPossibleIpv6(host) + ":" + cliArguments.getPort());
         System.out.println("User DN:  uid=admin,ou=system");
         System.out.println("Password: secret");
         System.out.println("LDAP server started in " + (System.currentTimeMillis() - startTime) + "ms");
@@ -159,6 +159,10 @@ public class LdapServer {
             partition.setSuffixDn(dn);
             directoryService.addPartition(partition);
         }
+    }
+
+    private String formatPossibleIpv6(String host) {
+        return (host != null && host.contains(":")) ? "[" + host + "]" : host;
     }
 
 }

@@ -31,8 +31,8 @@ import org.apache.directory.api.ldap.model.schema.SchemaManager;
 import org.apache.directory.api.ldap.model.schema.comparators.NormalizingComparator;
 import org.apache.directory.api.ldap.model.schema.registries.ComparatorRegistry;
 import org.apache.directory.api.ldap.model.schema.registries.SchemaLoader;
-import org.apache.directory.api.ldap.schemaloader.JarLdifSchemaLoader;
-import org.apache.directory.api.ldap.schemamanager.impl.DefaultSchemaManager;
+import org.apache.directory.api.ldap.schema.loader.JarLdifSchemaLoader;
+import org.apache.directory.api.ldap.schema.manager.impl.DefaultSchemaManager;
 import org.apache.directory.api.util.exception.Exceptions;
 import org.apache.directory.server.constants.ServerDNConstants;
 import org.apache.directory.server.core.DefaultDirectoryService;
@@ -141,8 +141,8 @@ public class InMemoryDirectoryServiceFactory implements DirectoryServiceFactory 
         }
 
         // Init system partition
-        Partition systemPartition = partitionFactory.createPartition(directoryService.getSchemaManager(), "system",
-                ServerDNConstants.SYSTEM_DN, 500,
+        Partition systemPartition = partitionFactory.createPartition(directoryService.getSchemaManager(),
+                directoryService.getDnFactory(), "system", ServerDNConstants.SYSTEM_DN, 500,
                 new File(directoryService.getInstanceLayout().getPartitionsDirectory(), "system"));
         systemPartition.setSchemaManager(directoryService.getSchemaManager());
         partitionFactory.addIndex(systemPartition, SchemaConstants.OBJECT_CLASS_AT, 100);
