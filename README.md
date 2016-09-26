@@ -55,6 +55,22 @@ You need to have [Maven](http://maven.apache.org/) installed
 	Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
 	entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
 
+### Building and Running with Docker
+
+This project also includes a _Dockerfile_ along with the _buildDocker.sh_ and _runDocker.sh_ helper scripts to build and run this project using Docker.
+
+*NOTE:* You may need to change the permissions of _buildDocker.sh_ and _runDocker.sh_ to make them executable.
+
+To build the Docker image:
+
+    $ ./buildDocker.sh
+
+To start the Docker container:
+
+    $ ./runDocker.sh
+
+By default, these scripts will build a Docker image and start a container with the LDAP server running on _localhost:10389_ and _src/main/resources/jboss-org.ldif_ as the ldif file. You can change the default options by modifying the _runDocker.sh_ script.
+
 ## Default LDIF
 
 	dn: dc=jboss,dc=org

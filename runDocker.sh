@@ -1,0 +1,1 @@
+docker run -p 10389:10389 -ti ldap-server:latest /bin/bash -c 'cd ldap && java -jar target/ldap-server.jar src/main/resources/jboss-org.ldif'
