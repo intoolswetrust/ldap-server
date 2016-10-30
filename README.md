@@ -4,6 +4,19 @@ Simple all-in-one LDAP server (wrapped [ApacheDS](http://directory.apache.org/ap
 
 You don't need any configuration files to get it working. Just launch the JAR and that's it.
 
+## Download
+
+Download latest tag from [GitHub releases](https://github.com/kwart/ldap-server/releases)
+
+### Docker container
+
+If you search a lightweight Docker container with LDAP server for your testing, you can use `kwart/ldap-server`.
+
+```bash
+docker pull kwart/ldap-server
+docker run -it --rm kwart/ldap-server
+```
+
 ## Development
 
 You can simply build the software yourself.
