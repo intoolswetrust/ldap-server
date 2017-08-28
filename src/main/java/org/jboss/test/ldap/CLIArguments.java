@@ -39,6 +39,9 @@ public class CLIArguments {
     @Parameter(names = { "--help", "-h" }, description = "shows this help and exits", help = true)
     private boolean help;
 
+    @Parameter(names = { "--allow-anonymous", "-a" }, description = "allows anonymous bind to the server")
+    private boolean allowAnonymous;
+    
     @Parameter(names = { "--port",
             "-p" }, description = "takes [portNumber] as a parameter and binds the LDAP server on that port")
     private int port = DEFAULT_PORT;
@@ -61,6 +64,10 @@ public class CLIArguments {
 
     public String getBindAddress() {
         return bindAddress;
+    }
+
+    public boolean isAllowAnonymous() {
+        return allowAnonymous;
     }
 
 }

@@ -83,8 +83,8 @@ public class LdapServer {
         dsFactory.init("ds");
 
         directoryService = dsFactory.getDirectoryService();
-
         System.out.println("Directory service started in " + (System.currentTimeMillis() - startTime) + "ms");
+        directoryService.setAllowAnonymousAccess(cliArguments.isAllowAnonymous());
         importLdif(cliArguments.getLdifFiles());
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
