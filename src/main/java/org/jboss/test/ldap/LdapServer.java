@@ -89,7 +89,7 @@ public class LdapServer {
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
         TcpTransport tcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort());
-        //tcp.setEnableSSL(true);
+        tcp.setEnableSSL(true);
         ldapServer.setTransports(tcp);
         ldapServer.setDirectoryService(directoryService);
 
