@@ -41,7 +41,7 @@ public class CLIArguments {
 
     @Parameter(names = { "--allow-anonymous", "-a" }, description = "allows anonymous bind to the server")
     private boolean allowAnonymous;
-    
+
     @Parameter(names = { "--port",
             "-p" }, description = "takes [portNumber] as a parameter and binds the LDAP server on that port")
     private int port = DEFAULT_PORT;
@@ -49,6 +49,24 @@ public class CLIArguments {
     @Parameter(names = { "--bind",
             "-b" }, description = "takes [bindAddress] as a parameter and binds the LDAP server on the address")
     private String bindAddress = DEFAULT_ADDR;
+
+    @Parameter(names = { "--ssl-port",
+            "-sp" }, description = "adds SSL transport layer (i.e. 'ldaps' protocol). It takes [portNumber] as a parameter and binds the LDAPs server on the port")
+    private Integer sslPort = null;
+
+    @Parameter(names = { "--ssl-need-client-auth", "-snc" }, description = "enables SSL 'needClientAuth' flag")
+    private boolean sslNeedClientAuth;
+
+    @Parameter(names = { "--ssl-want-client-auth", "-swc" }, description = "enables SSL 'wantClientAuth' flag")
+    private boolean sslWantClientAuth;
+
+    @Parameter(names = { "--ssl-enabled-protocol",
+            "-sep" }, description = "takes [sslProtocolName] as argument and enables it for 'ldaps'. Can be used multiple times."
+                    + " If the argument is not provided following are used: TLSv1, TLSv1.1, TLSv1.2")
+    private List<String> sslEnabledProtocols;
+
+    @Parameter(names = { "--ssl-enabled-ciphersuite", "-scs" }, description = "takes [sslCipherSuite] as argument and enables it for 'ldaps'. Can be used multiple times.")
+    private List<String> sslCipherSuite;
 
     public List<String> getLdifFiles() {
         return ldifFiles;
@@ -68,6 +86,26 @@ public class CLIArguments {
 
     public boolean isAllowAnonymous() {
         return allowAnonymous;
+    }
+
+    public Integer getSslPort() {
+        return sslPort;
+    }
+
+    public boolean isSslNeedClientAuth() {
+        return sslNeedClientAuth;
+    }
+
+    public boolean isSslWantClientAuth() {
+        return sslWantClientAuth;
+    }
+
+    public List<String> getSslEnabledProtocols() {
+        return sslEnabledProtocols;
+    }
+
+    public List<String> getSslCipherSuite() {
+        return sslCipherSuite;
     }
 
 }

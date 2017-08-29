@@ -60,6 +60,8 @@ public class LdapServer {
         jCmd.setUsageTail("Examples:\n\n" //
                 + "$ java -jar ldap-server.jar users.ldif\n" //
                 + " Starts LDAP server on port 10389 (all interfaces) and imports users.ldif\n\n" //
+                + "$ java -jar ldap-server.jar -sp 10636 users.ldif\n" //
+                + " Starts LDAP server on port 10389 and LDAPs on port 10636 and imports the LDIF\n\n" //
                 + "$ java -jar ldap-server.jar -b 127.0.0.1 -p 389\n" //
                 + " Starts LDAP server on address 127.0.0.1:389 and imports default data (one user entry 'uid=jduke,ou=Users,dc=jboss,dc=org'");
         if (cliArguments.isHelp()) {
@@ -88,7 +90,18 @@ public class LdapServer {
         importLdif(cliArguments.getLdifFiles());
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
-        ldapServer.setTransports(new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort()));
+        TcpTransport tcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort());
+        if (cliArguments.getSslPort() != null) {
+            TcpTransport ldapsTcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getSslPort());
+            ldapsTcp.setEnableSSL(true);
+            ldapsTcp.setEnabledProtocols(cliArguments.getSslEnabledProtocols());
+            ldapsTcp.setEnabledCiphers(cliArguments.getSslCipherSuite());
+            ldapsTcp.setNeedClientAuth(cliArguments.isSslNeedClientAuth());
+            ldapsTcp.setWantClientAuth(cliArguments.isSslWantClientAuth());
+            ldapServer.setTransports(tcp, ldapsTcp);
+        } else {
+            ldapServer.setTransports(tcp);
+        }
         ldapServer.setDirectoryService(directoryService);
 
         ldapServer.start();
@@ -101,6 +114,9 @@ public class LdapServer {
             host = cliArguments.getBindAddress();
         }
         System.out.println("URL:      ldap://" + formatPossibleIpv6(host) + ":" + cliArguments.getPort());
+        if (cliArguments.getSslPort() != null) {
+            System.out.println("          ldaps://" + formatPossibleIpv6(host) + ":" + cliArguments.getSslPort());
+        }
         System.out.println("User DN:  uid=admin,ou=system");
         System.out.println("Password: secret");
         System.out.println("LDAP server started in " + (System.currentTimeMillis() - startTime) + "ms");

@@ -4,6 +4,8 @@ Simple all-in-one LDAP server (wrapped [ApacheDS](http://directory.apache.org/ap
 
 You don't need any configuration files to get it working. Just launch the JAR and that's it.
 
+Server data are not persisted, they just live in memory.
+
 ## Download
 
 Download latest tag from [GitHub releases](https://github.com/kwart/ldap-server/releases)
@@ -25,7 +27,9 @@ You can simply build the software yourself.
 
 You should have [git](http://git-scm.com/) installed
 
-	$ git clone git://github.com/kwart/ldap-server.git
+```
+git clone git://github.com/kwart/ldap-server.git
+```
 
 or you can download [current sources as a zip file](https://github.com/kwart/ldap-server/archive/master.zip)
 
@@ -33,73 +37,100 @@ or you can download [current sources as a zip file](https://github.com/kwart/lda
 
 You need to have [Maven](http://maven.apache.org/) installed
 
-	$ cd ldap-server
-	$ mvn clean package
+```bash
+mvn clean package
+```
 
 ### How to run it
 
-	$ java -jar ldap-server.jar [data.ldif]
+```bash
+java -jar ldap-server.jar [data.ldif]
+```
 
 #### Help
 
-	$ java -jar ldap-server.jar --help
-	The ldap-server is a simple LDAP server implementation based on ApacheDS. It
-	creates one user partition with root 'dc=jboss,dc=org'.
-	
-	Usage: java -jar ldap-server.jar [options] [LDIFs to import]
-	  Options:
-	    --bind, -b
-	       takes [bindAddress] as a parameter and binds the LDAP server on the
-	       address
-	       Default: 0.0.0.0
-	    --help, -h
-	       shows this help and exits
-	       Default: false
-	    --port, -p
-	       takes [portNumber] as a parameter and binds the LDAP server on that port
-	       Default: 10389
-	
-	Examples:
-	
-	$ java -jar ldap-server.jar users.ldif
-	Starts LDAP server on port 10389 (all interfaces) and imports users.ldif
-	
-	$ java -jar ldap-server.jar -b 127.0.0.1 -p 389
-	Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
-	entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
+```
+$ java -jar target/ldap-server.jar --help
+The ldap-server is a simple LDAP server implementation based on ApacheDS. It
+creates one user partition with root 'dc=jboss,dc=org'.
+
+Usage: java -jar ldap-server.jar [options] [LDIFs to import]
+  Options:
+    --allow-anonymous, -a
+       allows anonymous bind to the server
+       Default: false
+    --bind, -b
+       takes [bindAddress] as a parameter and binds the LDAP server on the
+       address
+       Default: 0.0.0.0
+    --help, -h
+       shows this help and exits
+       Default: false
+    --port, -p
+       takes [portNumber] as a parameter and binds the LDAP server on that port
+       Default: 10389
+    --ssl-enabled-ciphersuite, -scs
+       takes [sslCipherSuite] as argument and enables it for 'ldaps'. Can be
+       used multiple times.
+    --ssl-enabled-protocol, -sep
+       takes [sslProtocolName] as argument and enables it for 'ldaps'. Can be
+       used multiple times. If the argument is not provided following are used:
+       TLSv1, TLSv1.1, TLSv1.2
+    --ssl-need-client-auth, -snc
+       enables SSL 'needClientAuth' flag
+       Default: false
+    --ssl-port, -sp
+       adds SSL transport layer (i.e. 'ldaps' protocol). It takes [portNumber]
+       as a parameter and binds the LDAPs server on the port
+    --ssl-want-client-auth, -swc
+       enables SSL 'wantClientAuth' flag
+       Default: false
+
+Examples:
+
+$ java -jar ldap-server.jar users.ldif
+Starts LDAP server on port 10389 (all interfaces) and imports users.ldif
+
+$ java -jar ldap-server.jar -b 127.0.0.1 -p 389
+Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
+entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
+```
 
 ## Default LDIF
 
-	dn: dc=jboss,dc=org
-	dc: jboss
-	objectClass: top
-	objectClass: domain
+```
+version: 1
 
-	dn: ou=Users,dc=jboss,dc=org
-	objectClass: organizationalUnit
-	objectClass: top
-	ou: Users
-	
-	dn: uid=jduke,ou=Users,dc=jboss,dc=org
-	objectClass: top
-	objectClass: person
-	objectClass: inetOrgPerson
-	cn: Java Duke
-	sn: duke
-	uid: jduke
-	userPassword: theduke
-	
-	dn: ou=Roles,dc=jboss,dc=org
-	objectclass: top
-	objectclass: organizationalUnit
-	ou: Roles
-	
-	dn: cn=Admin,ou=Roles,dc=jboss,dc=org
-	objectClass: top
-	objectClass: groupOfNames
-	cn: Admin
-	member: uid=jduke,ou=Users,dc=jboss,dc=org
+dn: dc=jboss,dc=org
+dc: jboss
+objectClass: top
+objectClass: domain
 
+dn: ou=Users,dc=jboss,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: Users
+
+dn: uid=jduke,ou=Users,dc=jboss,dc=org
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+cn: Java Duke
+sn: duke
+uid: jduke
+userPassword: theduke
+
+dn: ou=Roles,dc=jboss,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: Roles
+
+dn: cn=Admin,ou=Roles,dc=jboss,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: Admin
+member: uid=jduke,ou=Users,dc=jboss,dc=org
+```
 
 ## License
 
