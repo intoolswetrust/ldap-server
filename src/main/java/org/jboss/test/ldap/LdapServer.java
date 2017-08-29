@@ -88,9 +88,12 @@ public class LdapServer {
         importLdif(cliArguments.getLdifFiles());
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
-        ldapServer.setTransports(new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort()));
+        TcpTransport tcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort());
+        tcp.setEnableSSL(true);
+        ldapServer.setTransports(tcp);
         ldapServer.setDirectoryService(directoryService);
 
+        
         ldapServer.start();
 
         System.out.println("You can connect to the server now");
