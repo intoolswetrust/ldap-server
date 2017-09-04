@@ -76,6 +76,11 @@ Usage: java -jar ldap-server.jar [options] [LDIFs to import]
        takes [sslProtocolName] as argument and enables it for 'ldaps'. Can be
        used multiple times. If the argument is not provided following are used:
        TLSv1, TLSv1.1, TLSv1.2
+    --ssl-keystore-file, -skf
+       takes keystore [filePath] as argument. The keystore should contain
+       privateKey to be used by LDAPs
+    --ssl-keystore-password, -skp
+       takes keystore [password] as argument
     --ssl-need-client-auth, -snc
        enables SSL 'needClientAuth' flag
        Default: false
@@ -91,9 +96,25 @@ Examples:
 $ java -jar ldap-server.jar users.ldif
 Starts LDAP server on port 10389 (all interfaces) and imports users.ldif
 
+$ java -jar ldap-server.jar -sp 10636 users.ldif
+Starts LDAP server on port 10389 and LDAPs on port 10636 and imports the LDIF
+
 $ java -jar ldap-server.jar -b 127.0.0.1 -p 389
 Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
 entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
+```
+
+#### SSL/TLS
+
+If you want to enable SSL/TLS ('ldaps') and use your own certificate, the generate (or import) the private key into a JKS keystore and provide path to it as argument. 
+
+```bash
+# generate a keypair
+keytool -validity 365 -genkey -alias myserver -keyalg RSA -keystore /tmp/ldaps.keystore -storepass 123456 -keypass 123456 -dname cn=myserver.mycompany.com
+
+# use the generated keypair (-skf) with given password (-skp)
+# We also enable detail SSL debug information by setting javax.net.debug system property.
+java -Djavax.net.debug=all -jar target/ldap-server.jar -sp 1038389 -skf /tmp/ldaps.keystore -skp 123456
 ```
 
 ## Default LDIF

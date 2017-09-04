@@ -68,6 +68,12 @@ public class CLIArguments {
     @Parameter(names = { "--ssl-enabled-ciphersuite", "-scs" }, description = "takes [sslCipherSuite] as argument and enables it for 'ldaps'. Can be used multiple times.")
     private List<String> sslCipherSuite;
 
+    @Parameter(names = { "--ssl-keystore-file", "-skf" }, description = "takes keystore [filePath] as argument. The keystore should contain privateKey to be used by LDAPs")
+    private String sslKeystoreFile;
+
+    @Parameter(names = { "--ssl-keystore-password", "-skp" }, description = "takes keystore [password] as argument")
+    private String sslKeystorePassword;
+
     public List<String> getLdifFiles() {
         return ldifFiles;
     }
@@ -108,4 +114,11 @@ public class CLIArguments {
         return sslCipherSuite;
     }
 
+    public String getSslKeystoreFile() {
+        return sslKeystoreFile;
+    }
+
+    public String getSslKeystorePassword() {
+        return sslKeystorePassword;
+    }
 }

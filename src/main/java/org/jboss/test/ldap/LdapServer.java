@@ -22,11 +22,12 @@ package org.jboss.test.ldap;
 
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
 import org.apache.directory.api.ldap.model.name.Dn;
+import org.apache.directory.api.util.IOUtils;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
@@ -98,6 +99,9 @@ public class LdapServer {
             ldapsTcp.setEnabledCiphers(cliArguments.getSslCipherSuite());
             ldapsTcp.setNeedClientAuth(cliArguments.isSslNeedClientAuth());
             ldapsTcp.setWantClientAuth(cliArguments.isSslWantClientAuth());
+
+            ldapServer.setKeystoreFile(cliArguments.getSslKeystoreFile());
+            ldapServer.setCertificatePassword(cliArguments.getSslKeystorePassword());
             ldapServer.setTransports(tcp, ldapsTcp);
         } else {
             ldapServer.setTransports(tcp);
