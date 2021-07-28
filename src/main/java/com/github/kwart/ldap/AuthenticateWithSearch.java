@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import java.util.Properties;
 
@@ -31,22 +31,14 @@ import javax.naming.ldap.LdapContext;
 
 /**
  * An LDAP bind application with user search by <code>uid</code> attribute.
- * <p>
- * Usage:
- * 
- * <pre>
- * java org.jboss.test.ldap.AuthenticateWithSearch ldap://localhost:10389 jduke theduke
- * </pre>
- * 
- * </p>
- * 
+ *
  * @author Josef Cacek
  */
 public class AuthenticateWithSearch {
 
     /**
      * The main.
-     * 
+     *
      * @param args
      * @throws NamingException
      */
@@ -81,7 +73,7 @@ public class AuthenticateWithSearch {
             ctx = new InitialLdapContext(env, null);
             final SearchControls searchControls = new SearchControls();
             searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            final String baseDN = "dc=jboss,dc=org";
+            final String baseDN = "dc=ldap,dc=example";
             NamingEnumeration<?> namingEnum = ctx.search(baseDN, "(uid={0})", new Object[] { args[1] }, searchControls);
             String userDN = null;
             if (namingEnum.hasMore()) {

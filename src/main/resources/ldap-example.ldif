@@ -1,16 +1,16 @@
 version: 1
 
-dn: dc=jboss,dc=org
-dc: jboss
+dn: dc=ldap,dc=example
+dc: ldap
 objectClass: top
 objectClass: domain
 
-dn: ou=Users,dc=jboss,dc=org
+dn: ou=Users,dc=ldap,dc=example
 objectClass: organizationalUnit
 objectClass: top
 ou: Users
 
-dn: uid=jduke,ou=Users,dc=jboss,dc=org
+dn: uid=jduke,ou=Users,dc=ldap,dc=example
 objectClass: top
 objectClass: person
 objectClass: inetOrgPerson
@@ -19,13 +19,13 @@ sn: duke
 uid: jduke
 userPassword: theduke
 
-dn: ou=Roles,dc=jboss,dc=org
+dn: ou=Roles,dc=ldap,dc=example
 objectclass: top
 objectclass: organizationalUnit
 ou: Roles
 
-dn: cn=Admin,ou=Roles,dc=jboss,dc=org
+dn: cn=Admin,ou=Roles,dc=ldap,dc=example
 objectClass: top
 objectClass: groupOfNames
 cn: Admin
-member: uid=jduke,ou=Users,dc=jboss,dc=org
+member: uid=jduke,ou=Users,dc=ldap,dc=example

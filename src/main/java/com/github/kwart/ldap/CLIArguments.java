@@ -18,7 +18,7 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import java.util.ArrayList;
 import java.util.List;

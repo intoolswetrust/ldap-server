@@ -52,7 +52,7 @@ java -jar ldap-server.jar [data.ldif]
 ```
 $ java -jar target/ldap-server.jar --help
 The ldap-server is a simple LDAP server implementation based on ApacheDS. It
-creates one user partition with root 'dc=jboss,dc=org'.
+creates one user partition with root 'dc=ldap,dc=example'.
 
 Usage: java -jar ldap-server.jar [options] [LDIFs to import]
   Options:
@@ -101,7 +101,7 @@ Starts LDAP server on port 10389 and LDAPs on port 10636 and imports the LDIF
 
 $ java -jar ldap-server.jar -b 127.0.0.1 -p 389
 Starts LDAP server on address 127.0.0.1:389 and imports default data (one user
-entry 'uid=jduke,ou=Users,dc=jboss,dc=org'
+entry 'uid=jduke,ou=Users,dc=ldap,dc=example'
 ```
 
 #### SSL/TLS
@@ -122,17 +122,17 @@ java -Djavax.net.debug=all -jar target/ldap-server.jar -sp 1038389 -skf /tmp/lda
 ```
 version: 1
 
-dn: dc=jboss,dc=org
-dc: jboss
+dn: dc=ldap,dc=example
+dc: ldap
 objectClass: top
 objectClass: domain
 
-dn: ou=Users,dc=jboss,dc=org
+dn: ou=Users,dc=ldap,dc=example
 objectClass: organizationalUnit
 objectClass: top
 ou: Users
 
-dn: uid=jduke,ou=Users,dc=jboss,dc=org
+dn: uid=jduke,ou=Users,dc=ldap,dc=example
 objectClass: top
 objectClass: person
 objectClass: inetOrgPerson
@@ -141,16 +141,16 @@ sn: duke
 uid: jduke
 userPassword: theduke
 
-dn: ou=Roles,dc=jboss,dc=org
+dn: ou=Roles,dc=ldap,dc=example
 objectclass: top
 objectclass: organizationalUnit
 ou: Roles
 
-dn: cn=Admin,ou=Roles,dc=jboss,dc=org
+dn: cn=Admin,ou=Roles,dc=ldap,dc=example
 objectClass: top
 objectClass: groupOfNames
 cn: Admin
-member: uid=jduke,ou=Users,dc=jboss,dc=org
+member: uid=jduke,ou=Users,dc=ldap,dc=example
 ```
 
 ## License

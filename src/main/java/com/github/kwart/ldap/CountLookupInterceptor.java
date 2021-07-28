@@ -18,7 +18,7 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.exception.LdapException;

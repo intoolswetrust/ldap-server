@@ -18,7 +18,7 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import java.util.Properties;
 
@@ -29,22 +29,14 @@ import javax.naming.ldap.LdapContext;
 
 /**
  * A simple LDAP bind application.
- * <p>
- * Usage:
- * 
- * <pre>
- * java org.jboss.test.ldap.Authenticate ldap://localhost:10389 uid=jduke,ou=Users,dc=jboss,dc=org theduke
- * </pre>
- * 
- * </p>
- * 
+ *
  * @author Josef Cacek
  */
 public class Authenticate {
 
     /**
      * The main.
-     * 
+     *
      * @param args
      * @throws NamingException
      */
@@ -56,8 +48,8 @@ public class Authenticate {
             System.err.println("\tjava " + Authenticate.class.getName() + " <ldapURL> <userDN> <password>");
             System.err.println();
             System.err.println("Example:");
-            System.err.println(
-                    "\tjava -cp ldap-server.jar org.jboss.test.ldap.Authenticate ldap://localhost:10389 uid=jduke,ou=Users,dc=jboss,dc=org theduke");
+            System.err.println("\tjava -cp ldap-server.jar " + Authenticate.class.getName()
+                    + "ldap://localhost:10389 uid=jduke,ou=Users,dc=ldap,dc=example theduke");
             System.err.println();
             System.err.println("Exit codes:");
             System.err.println("\t0\tAuthentication succeeded");

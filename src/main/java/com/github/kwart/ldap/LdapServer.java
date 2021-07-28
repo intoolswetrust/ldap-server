@@ -18,11 +18,12 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 
-//import org.apache.commons.io.IOUtils;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
@@ -39,7 +40,7 @@ import org.apache.directory.server.protocol.shared.transport.TcpTransport;
  */
 public class LdapServer {
 
-    private static final String LDIF_FILENAME_JBOSS_ORG = "jboss-org.ldif";
+    private static final String DEFAULT_LDIF_FILENAME = "ldap-example.ldif";
 
     private final DirectoryService directoryService;
     private final org.apache.directory.server.ldap.LdapServer ldapServer;
@@ -57,14 +58,14 @@ public class LdapServer {
         final ExtCommander jCmd = new ExtCommander(cliArguments, args);
         jCmd.setProgramName("java -jar ldap-server.jar");
         jCmd.setUsageHead(
-                "The ldap-server is a simple LDAP server implementation based on ApacheDS. It creates one user partition with root 'dc=jboss,dc=org'.");
+                "The ldap-server is a simple LDAP server implementation based on ApacheDS. It creates one user partition with root 'dc=ldap,dc=example'.");
         jCmd.setUsageTail("Examples:\n\n" //
                 + "$ java -jar ldap-server.jar users.ldif\n" //
                 + " Starts LDAP server on port 10389 (all interfaces) and imports users.ldif\n\n" //
                 + "$ java -jar ldap-server.jar -sp 10636 users.ldif\n" //
                 + " Starts LDAP server on port 10389 and LDAPs on port 10636 and imports the LDIF\n\n" //
                 + "$ java -jar ldap-server.jar -b 127.0.0.1 -p 389\n" //
-                + " Starts LDAP server on address 127.0.0.1:389 and imports default data (one user entry 'uid=jduke,ou=Users,dc=jboss,dc=org'");
+                + " Starts LDAP server on address 127.0.0.1:389 and imports default data (one user entry 'uid=jduke,ou=Users,dc=ldap,dc=example'");
         if (cliArguments.isHelp()) {
             jCmd.usage();
             return;
@@ -80,6 +81,7 @@ public class LdapServer {
      * @throws Exception
      */
     public LdapServer(CLIArguments cliArguments) throws Exception {
+        requireNonNull(cliArguments, "The CLIArguments instance has to be provided");
         long startTime = System.currentTimeMillis();
 
         InMemoryDirectoryServiceFactory dsFactory = new InMemoryDirectoryServiceFactory();
@@ -129,7 +131,7 @@ public class LdapServer {
 
     /**
      * Stops LDAP server and the underlying directory service.
-     * 
+     *
      * @throws Exception
      */
     public void stop() throws Exception {
@@ -146,7 +148,7 @@ public class LdapServer {
     private void importLdif(List<String> ldifFiles) throws Exception {
         if (ldifFiles == null || ldifFiles.isEmpty()) {
             System.out.println("Importing default data\n");
-            importLdif(new LdifReader(LdapServer.class.getResourceAsStream("/" + LDIF_FILENAME_JBOSS_ORG)));
+            importLdif(new LdifReader(LdapServer.class.getResourceAsStream("/" + DEFAULT_LDIF_FILENAME)));
         } else {
             for (String ldifFile : ldifFiles) {
                 System.out.println("Importing " + ldifFile + "\n");

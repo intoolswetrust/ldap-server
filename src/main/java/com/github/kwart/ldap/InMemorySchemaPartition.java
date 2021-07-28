@@ -18,7 +18,7 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import java.net.URL;
 import java.util.Map;

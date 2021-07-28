@@ -18,7 +18,7 @@
  *
  */
 
-package org.jboss.test.ldap;
+package com.github.kwart.ldap;
 
 import java.io.File;
 import java.io.IOException;
