@@ -153,6 +153,21 @@ cn: Admin
 member: uid=jduke,ou=Users,dc=ldap,dc=example
 ```
 
+## Deploy/Release
+
+Deploy snapshots
+
+```
+mvn clean install deploy
+```
+
+Release
+
+```
+mvn -Prelease release:prepare
+mvn -Prelease release:perform
+```
+
 ## License
 
 * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
