@@ -25,6 +25,9 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
+import org.apache.directory.api.ldap.model.entry.DefaultModification;
+import org.apache.directory.api.ldap.model.entry.Modification;
+import org.apache.directory.api.ldap.model.entry.ModificationOperation;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
 import org.apache.directory.api.ldap.model.name.Dn;
@@ -92,6 +95,13 @@ public class LdapServer {
         directoryService.setAllowAnonymousAccess(cliArguments.isAllowAnonymous());
 //        directoryService.addLast(new CountLookupInterceptor());
         importLdif(cliArguments.getLdifFiles());
+        String customPassword = cliArguments.getAdminPassword();
+        if (customPassword != null) {
+            Modification replacePwd = new DefaultModification( ModificationOperation.REPLACE_ATTRIBUTE, "userPassword",
+                    customPassword );
+            Dn adminDn = directoryService.getDnFactory().create("uid=admin,ou=system");
+            directoryService.getAdminSession().modify(adminDn, replacePwd);
+        }
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
         TcpTransport tcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort());
@@ -125,7 +135,7 @@ public class LdapServer {
             System.out.println("          ldaps://" + formatPossibleIpv6(host) + ":" + cliArguments.getSslPort());
         }
         System.out.println("User DN:  uid=admin,ou=system");
-        System.out.println("Password: secret");
+        System.out.println("Password: " + (customPassword != null ? "***" : "secret"));
         System.out.println("LDAP server started in " + (System.currentTimeMillis() - startTime) + "ms");
     }
 

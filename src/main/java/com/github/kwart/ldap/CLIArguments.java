@@ -42,6 +42,10 @@ public class CLIArguments {
     @Parameter(names = { "--allow-anonymous", "-a" }, description = "allows anonymous bind to the server")
     private boolean allowAnonymous;
 
+    @Parameter(names = { "--admin-password",
+            "-ap" }, description = "changes password for account 'uid=admin,ou=system' (default password is 'secret')")
+    private String adminPassword;
+
     @Parameter(names = { "--port",
             "-p" }, description = "takes [portNumber] as a parameter and binds the LDAP server on that port")
     private int port = DEFAULT_PORT;
@@ -88,6 +92,10 @@ public class CLIArguments {
 
     public String getBindAddress() {
         return bindAddress;
+    }
+
+    public String getAdminPassword() {
+        return adminPassword;
     }
 
     public boolean isAllowAnonymous() {
