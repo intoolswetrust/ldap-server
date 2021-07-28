@@ -14,7 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.apache.ds>2.0.0-M24</version.org.apache.ds>
+        <version.org.apache.ds>2.0.0.AM26</version.org.apache.ds>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <exec.mainClass>com.github.kwart.ldap.LdapServer</exec.mainClass>
