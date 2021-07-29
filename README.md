@@ -56,6 +56,9 @@ creates one user partition with root 'dc=ldap,dc=example'.
 
 Usage: java -jar ldap-server.jar [options] [LDIFs to import]
   Options:
+    --admin-password, -ap
+       changes password for account 'uid=admin,ou=system' (default password is
+       'secret')
     --allow-anonymous, -a
        allows anonymous bind to the server
        Default: false
