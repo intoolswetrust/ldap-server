@@ -10,7 +10,7 @@
 
     <name>ldap-server</name>
     <description>Simple single JAR LDAP server. Based on ApacheDS, in-memory, just for testing.</description>
-    <url>https://github.com/kwart/ldap-server/</url>
+    <url>https://github.com/intoolswetrust/ldap-server/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -145,9 +145,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/kwart/ldap-server.git</connection>
-        <developerConnection>scm:git:git@github.com:kwart/ldap-server.git</developerConnection>
-        <url>http://github.com/kwart/ldap-server/</url>
+        <connection>scm:git:git://github.com/intoolswetrust/ldap-server.git</connection>
+        <developerConnection>scm:git:git@github.com:intoolswetrust/ldap-server.git</developerConnection>
+        <url>http://github.com/intoolswetrust/ldap-server/</url>
         <tag>HEAD</tag>
     </scm>
 
