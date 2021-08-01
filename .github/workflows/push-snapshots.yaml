@@ -32,7 +32,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Set PROJECT_VERSION
+        run: export PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+
       - name: Publish to Apache Maven Central
+        if: ${{ endsWith( env.PROJECT_VERSION, '-SNAPSHOT' }}
         run: mvn --batch-mode -Prelease deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
