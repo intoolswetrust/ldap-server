@@ -75,6 +75,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.directory.server</groupId>
                 <artifactId>apacheds-parent</artifactId>
                 <version>${version.org.apache.ds}</version>
@@ -96,7 +101,6 @@
             <artifactId>jcommander</artifactId>
             <version>1.32</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.directory.server</groupId>
@@ -121,7 +125,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
