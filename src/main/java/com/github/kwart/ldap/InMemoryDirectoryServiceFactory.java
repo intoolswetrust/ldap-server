@@ -92,7 +92,8 @@ public class InMemoryDirectoryServiceFactory implements DirectoryServiceFactory 
     /**
      * {@inheritDoc}
      */
-    public void init(String name) throws Exception {
+    @Override
+	public void init(String name) throws Exception {
         if ((directoryService != null) && directoryService.isStarted()) {
             return;
         }
@@ -154,14 +155,16 @@ public class InMemoryDirectoryServiceFactory implements DirectoryServiceFactory 
     /**
      * {@inheritDoc}
      */
-    public DirectoryService getDirectoryService() throws Exception {
+    @Override
+	public DirectoryService getDirectoryService() throws Exception {
         return directoryService;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PartitionFactory getPartitionFactory() throws Exception {
+    @Override
+	public PartitionFactory getPartitionFactory() throws Exception {
         return partitionFactory;
     }
 
