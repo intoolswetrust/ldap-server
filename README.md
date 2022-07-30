@@ -171,120 +171,38 @@ mvn -Prelease release:prepare
 mvn -Prelease release:perform
 ```
 
-## Usage:
+## Sample usage (LDAP search)
 
-Examples against running instance:
+The `ldapsearch` Linux tool is used in the following examples:
 
-```
-ldapsearch -x -b "dc=ldap,dc=example"
+```bash
+$ # Anonymous LDAP search
+$ # the 172.17.0.2 is the IP address of the kwart/ldap-server docker container
+$  ldapsearch -x -b "dc=ldap,dc=example" -LL -H ldap://172.17.0.2 | head -n 13 
+version: 1
 
-# extended LDIF
-#
-# LDAPv3
-# base <dc=ldap,dc=example> with scope subtree
-# filter: (objectclass=*)
-# requesting: ALL
-#
-
-# jduke, Users, ldap.example
-dn: uid=jduke,ou=Users,dc=ldap,dc=example
-sn: duke
-cn: Java Duke
+dn: ou=Roles,dc=ldap,dc=example
+ou: Roles
 objectclass: top
-objectclass: person
-objectclass: inetOrgPerson
-objectclass: organizationalPerson
-userpassword:: dGhlZHVrZQ==
-uid: jduke
+objectclass: organizationalUnit
 
-# Admin, Roles, ldap.example
 dn: cn=Admin,ou=Roles,dc=ldap,dc=example
 cn: Admin
 objectclass: top
 objectclass: groupOfNames
 member: uid=jduke,ou=Users,dc=ldap,dc=example
 
-# Roles, ldap.example
-dn: ou=Roles,dc=ldap,dc=example
-ou: Roles
-objectclass: top
-objectclass: organizationalUnit
-
-# ldap.example
+$ # LDAP search with a user authentication:
+$ ldapsearch -x -b "dc=ldap,dc=example" -LL -H ldap://172.17.0.2 -D "uid=jduke,ou=Users,dc=ldap,dc=example" -w theduke | tail -n 10
 dn: dc=ldap,dc=example
 dc: ldap
 objectclass: top
 objectclass: domain
 
-# Users, ldap.example
 dn: ou=Users,dc=ldap,dc=example
 ou: Users
 objectclass: top
 objectclass: organizationalUnit
-
-# search result
-search: 2
-result: 0 Success
-
-# numResponses: 6
-# numEntries: 5
-```
-
-```
-ldapsearch -x -b "dc=ldap,dc=example" -D "uid=jduke,ou=Users,dc=ldap,dc=example" -W
-
-Enter LDAP Password: 
-# extended LDIF
-#
-# LDAPv3
-# base <dc=ldap,dc=example> with scope subtree
-# filter: (objectclass=*)
-# requesting: ALL
-#
-
-# jduke, Users, ldap.example
-dn: uid=jduke,ou=Users,dc=ldap,dc=example
-sn: duke
-cn: Java Duke
-objectclass: top
-objectclass: person
-objectclass: inetOrgPerson
-objectclass: organizationalPerson
-userpassword:: dGhlZHVrZQ==
-uid: jduke
-
-# Admin, Roles, ldap.example
-dn: cn=Admin,ou=Roles,dc=ldap,dc=example
-cn: Admin
-objectclass: top
-objectclass: groupOfNames
-member: uid=jduke,ou=Users,dc=ldap,dc=example
-
-# Roles, ldap.example
-dn: ou=Roles,dc=ldap,dc=example
-ou: Roles
-objectclass: top
-objectclass: organizationalUnit
-
-# ldap.example
-dn: dc=ldap,dc=example
-dc: ldap
-objectclass: top
-objectclass: domain
-
-# Users, ldap.example
-dn: ou=Users,dc=ldap,dc=example
-ou: Users
-objectclass: top
-objectclass: organizationalUnit
-
-# search result
-search: 2
-result: 0 Success
-
-# numResponses: 6
-# numEntries: 5
-```
 
 ## License
 
