@@ -171,6 +171,39 @@ mvn -Prelease release:prepare
 mvn -Prelease release:perform
 ```
 
+## Sample usage (LDAP search)
+
+The `ldapsearch` Linux tool is used in the following examples:
+
+```bash
+$ # Anonymous LDAP search
+$ # the 172.17.0.2 is the IP address of the kwart/ldap-server docker container
+$  ldapsearch -x -b "dc=ldap,dc=example" -LL -H ldap://172.17.0.2 | head -n 13 
+version: 1
+
+dn: ou=Roles,dc=ldap,dc=example
+ou: Roles
+objectclass: top
+objectclass: organizationalUnit
+
+dn: cn=Admin,ou=Roles,dc=ldap,dc=example
+cn: Admin
+objectclass: top
+objectclass: groupOfNames
+member: uid=jduke,ou=Users,dc=ldap,dc=example
+
+$ # LDAP search with a user authentication:
+$ ldapsearch -x -b "dc=ldap,dc=example" -LL -H ldap://172.17.0.2 -D "uid=jduke,ou=Users,dc=ldap,dc=example" -w theduke | tail -n 10
+dn: dc=ldap,dc=example
+dc: ldap
+objectclass: top
+objectclass: domain
+
+dn: ou=Users,dc=ldap,dc=example
+ou: Users
+objectclass: top
+objectclass: organizationalUnit
+
 ## License
 
 * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
