@@ -28,6 +28,8 @@ import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.DefaultModification;
 import org.apache.directory.api.ldap.model.entry.Modification;
 import org.apache.directory.api.ldap.model.entry.ModificationOperation;
+import org.apache.directory.api.ldap.model.exception.LdapException;
+import org.apache.directory.api.ldap.model.ldif.ChangeType;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
 import org.apache.directory.api.ldap.model.name.Dn;
@@ -162,7 +164,17 @@ public class LdapServer {
         } else {
             for (String ldifFile : ldifFiles) {
                 System.out.println("Importing " + ldifFile + "\n");
-                importLdif(new LdifReader(ldifFile));
+                importLdif(new LdifReader(ldifFile) {
+                    @Override
+                    protected LdifEntry parseEntry() throws LdapException {
+                        // Workaround for limitation in LdifReader, which fails
+                        // to parse LDIF files with multiple entries, when at
+                        // least one of them has a changetype entry
+                        this.containsChanges = false;
+                        this.containsEntries = false;
+                        return super.parseEntry();
+                    }
+                });
             }
         }
     }
@@ -172,8 +184,15 @@ public class LdapServer {
             for (LdifEntry ldifEntry : ldifReader) {
                 checkPartition(ldifEntry);
                 System.out.print(ldifEntry.toString());
-                directoryService.getAdminSession()
-                        .add(new DefaultEntry(directoryService.getSchemaManager(), ldifEntry.getEntry()));
+                if (ldifEntry.getChangeType() == ChangeType.Modify) {
+                    directoryService.getAdminSession().modify(ldifEntry.getDn(), ldifEntry.getModifications());
+                } else if (ldifEntry.getChangeType() == ChangeType.None || ldifEntry.getChangeType() == ChangeType.Add ) {
+                    directoryService.getAdminSession()
+                            .add(new DefaultEntry(directoryService.
+                                    getSchemaManager(), ldifEntry.getEntry()));
+                } else {
+                    throw new IllegalStateException("Unknown change type: " + ldifEntry.getChangeType());
+                }
             }
         } finally {
             IOUtils.closeQuietly(ldifReader);
