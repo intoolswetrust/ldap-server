@@ -1,0 +1,27 @@
+dn: cn=nis,ou=schema
+changetype: modify
+replace: m-disabled
+m-disabled: FALSE
+-
+
+dn: m-oid=1.2.840.113556.1.4.222, ou=attributetypes, cn=nis,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
+objectclass: top
+m-oid: 1.2.840.113556.1.4.222
+m-name: memberOf
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
+m-singleValue: FALSE
+
+dn: m-oid=1.2.3.4.56789.1.0.200,ou=objectClasses,cn=nis,ou=schema
+m-may: memberOf
+m-typeobjectclass: AUXILIARY
+m-supobjectclass: top
+m-description: dummy
+m-oid: 1.2.3.4.56789.1.0.200
+m-name: groupMemberShip
+objectclass: metaObjectClass
+objectclass: metaTop
+objectclass: top
+
