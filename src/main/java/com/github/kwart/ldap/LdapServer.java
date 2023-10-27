@@ -36,6 +36,7 @@ import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.util.IOUtils;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
+import org.apache.directory.server.ldap.handlers.extended.StartTlsHandler;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 
 /**
@@ -106,7 +107,11 @@ public class LdapServer {
         }
 
         ldapServer = new org.apache.directory.server.ldap.LdapServer();
+        ldapServer.addExtendedOperationHandler(new StartTlsHandler());
+        ldapServer.setKeystoreFile(cliArguments.getSslKeystoreFile());
+        ldapServer.setCertificatePassword(cliArguments.getSslKeystorePassword());
         TcpTransport tcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getPort());
+        ldapServer.addTransports(tcp);
         if (cliArguments.getSslPort() != null) {
             TcpTransport ldapsTcp = new TcpTransport(cliArguments.getBindAddress(), cliArguments.getSslPort());
             ldapsTcp.setEnableSSL(true);
@@ -115,11 +120,7 @@ public class LdapServer {
             ldapsTcp.setNeedClientAuth(cliArguments.isSslNeedClientAuth());
             ldapsTcp.setWantClientAuth(cliArguments.isSslWantClientAuth());
 
-            ldapServer.setKeystoreFile(cliArguments.getSslKeystoreFile());
-            ldapServer.setCertificatePassword(cliArguments.getSslKeystorePassword());
-            ldapServer.setTransports(tcp, ldapsTcp);
-        } else {
-            ldapServer.setTransports(tcp);
+            ldapServer.addTransports(ldapsTcp);
         }
         ldapServer.setDirectoryService(directoryService);
 
