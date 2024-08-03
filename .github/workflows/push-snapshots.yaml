@@ -53,3 +53,11 @@ jobs:
 
       - name: Docker Build and Push the snapshot image
         run: docker buildx build --push -f Dockerfile --tag kwart/ldap-server:latest .
+
+      - name: Update Docker description
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae # v4.0.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: kwart/ldap-server
+          readme-filepath: ./README-docker.md
